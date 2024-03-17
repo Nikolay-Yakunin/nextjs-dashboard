@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -19,6 +20,13 @@ const FormSchema = z.object({
     invalid_type_error: 'Please select an invoice status.',
   }),
   date: z.string(),
+});
+
+const SignUpSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters long.' }),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
